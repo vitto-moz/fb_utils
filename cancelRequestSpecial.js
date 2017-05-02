@@ -6,8 +6,8 @@
 
 function getAllLinks() {
     var matchingElements = [];
-    var membersPanel = $('#pagelet_group_members');
-    allElements = $(membersPanel).find('[data-hovercard]');
+    var membersPanel = $('.uiContextualLayerParent');
+    allElements = $(membersPanel).find('.FriendRequestOutgoing');
     for (var i = 0, n = allElements.length; i < n; i++) {
         matchingElements.push(allElements[i]);
     }
@@ -15,82 +15,69 @@ function getAllLinks() {
 };
 
 function hoverOnLink(element) {
-    // console.log('element', element);
-    console.log('Добавляем в друзья: ', $(element).find('img').attr('aria-label'));
     var event = new Event('mouseover', {bubbles: true});
     event.preventDefault();
     event.isTrusted = true;
     element.addEventListener('mouseover', function (e) {
     }, false);
     element.dispatchEvent(event);
+    return element
 };
 
-function getAlreadyAddedButton(){
-    return $('.FriendRequestOutgoing').hasClass('hidden_elem');
+function getRequestButton() {
+    var requestButton = $('.uiContextualLayer').find('.FriendRequestOutgoing');
+    return requestButton;
 }
 
 function stepCrossLinks(linkNumber){
     var links = getAllLinks();
-    console.log('Позиция ', linkNumber/2);
 
     var stepCrossLinksPromise = new Promise (function (resolve, reject) {
         setTimeout(function () {
+
             if(links[linkNumber] === undefined) {
-                // console.log('undefinedundefinedundefinedundefinedundefined');
                 $('.uiBoxLightblue')[0].click();
                 stepCrossLinks(linkNumber);
             }
             hoverOnLink(links[linkNumber]);
             resolve(linkNumber);
-        }, 5000)
+        }, 4000)
     });
 
     stepCrossLinksPromise
-        .then(function (linkNumber) {
-            return getAllButtons();
-        })
-        .then(function (buttons) {
-            if (!getAlreadyAddedButton()) {
-                throw 'has already added';
-            } else {
-                return getAddFriendButton(buttons);
-            }
+        .then(function () {
+            var promise = new Promise(function(resolve, reject) {
+                window.setTimeout(function() {
+                    var requestButton = getRequestButton();
+                    if(requestButton.hasClass('hidden_elem')) reject();
+                    resolve(requestButton);
+                }, 2000);
+            });
+            return promise;
         })
         .then(function (button) {
-            if(button) button.click();
-            linkNumber = linkNumber + 2;
-            // $('html, body').animate({
-            //     scrollTop: $(button).offset().top
-            // }, 2000);
-            return true
+            $(button).click();
+            var promise = new Promise(function(resolve, reject) {
+                window.setTimeout(function() {
+                    $('.FriendListCancel').click();
+                    resolve();
+                }, 1000);
+            });
+            return promise;
         })
         .then(function (result) {
             setTimeout(function () {
-                // console.log("result", result);
+                console.log('before close modal', linkNumber);
                 closeModal(linkNumber);
             }, 1000)
         })
         .catch(function (error) {
-            // console.log(error);
-            linkNumber = linkNumber + 2;
+            linkNumber = linkNumber + 1;
             stepCrossLinks(linkNumber);
         });
-
-    // console.log(stepCrossLinksPromise);
 }
 
 stepCrossLinks(0);
-
-function getAllButtons() {
-    var buttons = document.getElementsByTagName('button');
-    return buttons
-}
-
-function getAddFriendButton(buttons) {
-    // console.log('buttons', buttons);
-    // console.log('addButton', $('.FriendRequestAdd'));
-    return $('.FriendRequestAdd');
-}
 
 function closeModal(linkNumber) {
     if ($('.layerConfirm')[0]) {
@@ -106,6 +93,7 @@ function closeModal(linkNumber) {
             return closeModal();
         });
     }
+    linkNumber = linkNumber + 1;
     stepCrossLinks(linkNumber);
 }
 
