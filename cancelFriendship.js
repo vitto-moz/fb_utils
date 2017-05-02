@@ -29,15 +29,16 @@ function hoverOnLink(element) {
     return element
 };
 
-function getFollowButton(buttons) {
+function getRequestButton() {
     // console.log("$('.FriendRequestOutgoing') ", $('.FriendRequestOutgoing'));
-    $('.FriendRequestOutgoing');
+    var requestButton = $('.uiContextualLayer').find('.FriendRequestOutgoing');
+    // console.log('requestButton', requestButton);
     // for (var i = 0; i < buttons.length; i++) {
         // console.log(buttons[]);
     //     if (buttons[i].innerText === "Вы подписаны") var followButton = buttons[i];
     // }
     // console.log('follow button', followButton);
-    return $('.FriendRequestOutgoing');
+    return requestButton;
 }
 
 function getUnFollowButton() {
@@ -50,11 +51,14 @@ function stepCrossLinks(linkNumber){
     var links = getAllLinks();
     // console.log('links', links);
     // console.log('linkNumber', linkNumber);
+    // console.log('linkNumber', linkNumber);
 
     var stepCrossLinksPromise = new Promise (function (resolve, reject) {
         setTimeout(function () {
+            // console.log('links inside', links);
+
             if(links[linkNumber] === undefined) {
-                // console.log('links', links);
+                 // console.log('fall');
                 $('.uiBoxLightblue')[0].click();
                 stepCrossLinks(linkNumber);
             }
@@ -64,47 +68,56 @@ function stepCrossLinks(linkNumber){
     });
 
     stepCrossLinksPromise
-        .then(function (linkNumber) {
-            var promise = new Promise(function(resolve, reject) {
-                window.setTimeout(function() {
-                    var allButtons = getAllButtons();
-                    resolve(allButtons);
-                });
-            });
-            return promise;
-        })
-        .then(function (buttons) {
+        // .then(function (linkNumber) {
+        //     var promise = new Promise(function(resolve, reject) {
+        //         window.setTimeout(function() {
+        //             var allButtons = getAllButtons();
+        //             resolve(allButtons);
+        //         });
+        //     });
+        //     return promise;
+        // })
+        .then(function () {
             // console.log('buttons from getAllButtons()', buttons);
             var promise = new Promise(function(resolve, reject) {
                 window.setTimeout(function() {
-                    var followButton = getFollowButton(buttons);
-                    // console.log('followButton ', followButton);
-                    resolve(followButton);
+                    // if ( getAddFriendButton()[0]) reject();
+                    var requestButton = getRequestButton();
+                    // console.log('!!!!!!!!requestButton ', requestButton);
+                    // console.log('+++arequestButton ', requestButton.hasClass('hidden_elem'));
+                    if(requestButton.hasClass('hidden_elem')) reject();
+                    resolve(requestButton);
                 }, 2000);
             });
             return promise;
         })
         .then(function (button) {
-            button.click();
+            // $($(button).find('a')).click();
+            // $(button[0]).click();
+            $(button).click();
+            // console.log('here button after click', button[0]);
             var promise = new Promise(function(resolve, reject) {
                 window.setTimeout(function() {
+                    // console.log("$('.FriendListCancel')", $('.FriendListCancel'));
                     $('.FriendListCancel').click();
                     resolve();
-                }, 500);
+                }, 1000);
             });
             return promise;
         })
-        .then(function () {
-            return getUnFollowButton();
-        })
+        // .then(function () {
+        //     return getUnFollowButton();
+        // })
         .then(function (result) {
             setTimeout(function () {
                 // console.log("result", result);
+                console.log('before close modal', linkNumber);
                 closeModal(linkNumber);
             }, 1000)
         })
         .catch(function (error) {
-            // console.log(error);
+            // console.log('you are only follower');
+            // console.log('error ', error);
             linkNumber = linkNumber + 1;
             // console.log("catch linkNumber", linkNumber);
             stepCrossLinks(linkNumber);
