@@ -9,9 +9,7 @@ function getAllLinks() {
 }
 
 function clickOnLink(element) {
-    // console.log('element.click() ', element.click());
-    // console.log('element ', element.click());
-    // debugger;
+    console.log('click ', new Date());
     element.click();
 }
 
@@ -77,7 +75,7 @@ function stepCrossLinks(linkNumber){
             if (checkIfMainModalExist()){
                 // console.log('resolve ',);
                 if (closeButton === undefined){
-                    console.log('closeButton === undefined ', closeButton === undefined);
+                    // console.log('closeButton === undefined ', closeButton === undefined);
                     closeButton = getCloseButtonForSave();
                 }
                 links = getAllLinks();
@@ -92,51 +90,47 @@ function stepCrossLinks(linkNumber){
 
     stepCrossLinksPromise
         .then(() => {
-        // console.log('links ', links);
-        // console.log('linkNumber ', linkNumber);
-        // console.log('nextItemExist(links, linkNumber----> ', nextItemExist(links, linkNumber));
-            if(nextItemExist(links, linkNumber)) {
-                return
-            } else {
-                $('.uiBoxLightblue')[0].click();
-                throw linkNumber;
-            }
+            return new Promise ((resolve, reject) => {
+                if(nextItemExist(links, linkNumber)) {
+                    resolve();
+                } else {
+                    $('.uiBoxLightblue')[0].click();
+                    reject(linkNumber);
+                }
+            })
         })
         .then(() => {
-        // console.log('alreadyAdded ',);
-            if(alreadyAdded(links, linkNumber)){
-                // stepCrossLinks(linkNumber+1);
-                throw linkNumber+1;
-            } else {
-                return linkNumber
-            }
+            return new Promise ((resolve, reject) => {
+                if(alreadyAdded(links, linkNumber)){
+                    reject(linkNumber + 1);
+                } else {
+                    resolve(linkNumber);
+                }
+            })
         })
         .then((linkNumber) => {
-            // console.log('Участник ',);
-            // setTimeout(function () {
-                // console.log('Участник', $(links[linkNumber]).attr('aria-label'));
-            // debugger;
-                return linkNumber;
-            // }, 5000)
+            return new Promise ((resolve, reject) => {
+                console.log('Участник', $(links[linkNumber]).attr('aria-label'));
+                resolve(linkNumber);
+            })
         })
         .then(function (linkNumber) {
-            // console.log('clickOnLink ',);
-            setTimeout(() => {
-                // debugger;
-                clickOnLink(links[linkNumber]);
-            } ,2000)
+            return new Promise ((resolve, reject) => {
+                setTimeout(() => {
+                    // debugger;
+                    clickOnLink(links[linkNumber]);
+                    resolve();
+                }, 4000);
+            })
         })
         .then(function (result) {
             setTimeout(function () {
                 closeModal(linkNumber, closeButton);
+                stepCrossLinks(linkNumber + 1);
             }, 2000)
         })
-        // .catch(function (error) {
-        //     linkNumber = linkNumber + 1;
-        //     stepCrossLinks(linkNumber);
-        // });
         .catch( linkNumber => {
-            console.log('CATCHED ',);
+            // console.log('CATCHED ',);
             stepCrossLinks(linkNumber)
         });
 }
@@ -149,42 +143,13 @@ function closeModal(linkNumber, closeButton) {
         }, 1000);
     }
 
-    // console.log("$('.layerCancel')[$('.layerCancel').length - 1] ", $('.layerCancel')[$('.layerCancel').length - 1]);
-    console.log("closeButton ", closeButton);
-    // console.log("!!$('.layerCancel')[$('.layerCancel').length - 1] ", !!$('.layerCancel')[$('.layerCancel').length - 1]);
-    // console.log(
-    //     "'.layerCancel')[$('.layerCancel').length - 1] !== closeButton",
-    //     $('.layerCancel')[$('.layerCancel').length - 1] !== closeButton
-    // );
-    // console.log(
-    //     "!Object.is($('.layerCancel')[$('.layerCancel').length - 1], closeButton)",
-    //     !Object.is($('.layerCancel')[$('.layerCancel').length - 1], closeButton)
-    // );
-    // debugger;
+    // console.log("closeButton ", closeButton);
     setTimeout(function () {
-        if(
-            // !!$('.layerCancel')[$('.layerCancel').length - 1]
-            // &&
-            // $('.layerCancel')[$('.layerCancel').length - 1] !== closeButton
-            // !Object.is($('.layerCancel')[$('.layerCancel').length - 1], closeButton)
-            // &&
-                //
-            // $('.layerCancel').length - 1 > 0
-            $('.layerCancel').length > 1
-        ) {
-            console.log('Canceled works ',);
-            // setTimeout(function () {
-            //     debugger;
-                $($('.layerCancel')[$('.layerCancel').length - 1])[0].click();
-                // console.log('CLOSED ',);
-                // console.log('closeButton ', closeButton);
-                return closeModal(linkNumber, closeButton);
-            // }, 10000);
+        if( $('.layerCancel').length > 1 ) {
+            $($('.layerCancel')[$('.layerCancel').length - 1])[0].click();
+            return closeModal(linkNumber, closeButton);
         }
     }, 5000);
-
-        stepCrossLinks(linkNumber + 1);
-
 }
 
 stepCrossLinks(0);
