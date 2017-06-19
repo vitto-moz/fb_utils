@@ -31,7 +31,7 @@ function getAlreadyAddedButton(){
 
 function stepCrossLinks(linkNumber){
     var links = getAllLinks();
-    console.log('Позиция ', linkNumber/2);
+    // console.log('Позиция ', linkNumber/2);
 
     var stepCrossLinksPromise = new Promise (function (resolve, reject) {
         setTimeout(function () {
@@ -58,25 +58,19 @@ function stepCrossLinks(linkNumber){
         })
         .then(function (button) {
             if(button) button.click();
-            linkNumber = linkNumber + 2;
-            // $('html, body').animate({
-            //     scrollTop: $(button).offset().top
-            // }, 2000);
+            linkNumber = linkNumber + 1;
             return true
         })
         .then(function (result) {
             setTimeout(function () {
-                // console.log("result", result);
                 closeModal(linkNumber);
+                stepCrossLinks(linkNumber + 1);
             }, 1000)
         })
         .catch(function (error) {
-            // console.log(error);
             linkNumber = linkNumber + 2;
             stepCrossLinks(linkNumber);
         });
-
-    // console.log(stepCrossLinksPromise);
 }
 
 stepCrossLinks(0);
@@ -87,8 +81,6 @@ function getAllButtons() {
 }
 
 function getAddFriendButton(buttons) {
-    // console.log('buttons', buttons);
-    // console.log('addButton', $('.FriendRequestAdd'));
     return $('.FriendRequestAdd');
 }
 
@@ -106,6 +98,6 @@ function closeModal(linkNumber) {
             return closeModal();
         });
     }
-    stepCrossLinks(linkNumber);
+    // stepCrossLinks(linkNumber);
 }
 
