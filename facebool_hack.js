@@ -25,18 +25,18 @@ function hoverOnLink(element) {
     element.dispatchEvent(event);
 };
 
-function getAlreadyAddedButton(){
+function checkIfAlreadyAdded(){
+    console.log("$('.FriendRequestOutgoing') ", $('.FriendRequestOutgoing'));
+    debugger;
     return $('.FriendRequestOutgoing').hasClass('hidden_elem');
 }
 
 function stepCrossLinks(linkNumber){
     var links = getAllLinks();
-    // console.log('Позиция ', linkNumber/2);
 
     var stepCrossLinksPromise = new Promise (function (resolve, reject) {
         setTimeout(function () {
             if(links[linkNumber] === undefined) {
-                // console.log('undefinedundefinedundefinedundefinedundefined');
                 $('.uiBoxLightblue')[0].click();
                 stepCrossLinks(linkNumber);
             }
@@ -47,16 +47,30 @@ function stepCrossLinks(linkNumber){
 
     stepCrossLinksPromise
         .then(function (linkNumber) {
+            // console.log('1111 ', );
             return getAllButtons();
         })
         .then(function (buttons) {
-            if (!getAlreadyAddedButton()) {
-                throw 'has already added';
-            } else {
-                return getAddFriendButton(buttons);
-            }
+            console.log('---->buttons ', buttons);
+            // console.log('checkIfAlreadyAdded() ', checkIfAlreadyAdded());
+            // if (checkIfAlreadyAdded()) {
+            //     throw 'has already added';
+            // } else {
+            return new Promise( (res, rej) => {
+                setTimeout( () => {
+                    res(getAddFriendButton());
+                }, 2000)
+            })
         })
         .then(function (button) {
+            return new Promise(
+                (res, rej) => {
+                    $(button).hasClass('hidden_elem') ? rej() : res(button)
+                }
+            )
+        })
+        .then(function (button) {
+            console.log('button ', button);
             if(button) button.click();
             linkNumber = linkNumber + 1;
             return true
@@ -77,11 +91,19 @@ stepCrossLinks(0);
 
 function getAllButtons() {
     var buttons = document.getElementsByTagName('button');
+    console.log('getAllButtons ', buttons);
     return buttons
 }
 
-function getAddFriendButton(buttons) {
-    return $('.FriendRequestAdd');
+function getAddFriendButton() {
+    console.log('getAddFriendButtongetAddFriendButtongetAddFriendButton ',);
+    let addFriendsButtons = $('.FriendRequestAdd');
+    // debugger;
+    // for (let i = 0; i < buttons.length; i++) {
+    //     console.log('hidden_elem ', !$(buttons[i]).hasClass('.hidden_elem'));
+    // }
+    console.log('buttonsbuttonsbuttons ',addFriendsButtons);
+    return addFriendsButtons[addFriendsButtons.length - 1];
 }
 
 function closeModal(linkNumber) {
