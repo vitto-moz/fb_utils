@@ -15,7 +15,6 @@ function getAllLinks() {
 };
 
 function hoverOnLink(element) {
-    // console.log('element', element);
     console.log('Добавляем в друзья: ', $(element).find('img').attr('aria-label'));
     var event = new Event('mouseover', {bubbles: true});
     event.preventDefault();
@@ -26,7 +25,7 @@ function hoverOnLink(element) {
 };
 
 function checkIfAlreadyAdded(){
-    console.log("$('.FriendRequestOutgoing') ", $('.FriendRequestOutgoing'));
+    // console.log("$('.FriendRequestOutgoing') ", $('.FriendRequestOutgoing'));
     debugger;
     return $('.FriendRequestOutgoing').hasClass('hidden_elem');
 }
@@ -42,20 +41,14 @@ function stepCrossLinks(linkNumber){
             }
             hoverOnLink(links[linkNumber]);
             resolve(linkNumber);
-        }, 5000)
+        }, 4000)
     });
 
     stepCrossLinksPromise
         .then(function (linkNumber) {
-            // console.log('1111 ', );
             return getAllButtons();
         })
         .then(function (buttons) {
-            console.log('---->buttons ', buttons);
-            // console.log('checkIfAlreadyAdded() ', checkIfAlreadyAdded());
-            // if (checkIfAlreadyAdded()) {
-            //     throw 'has already added';
-            // } else {
             return new Promise( (res, rej) => {
                 setTimeout( () => {
                     res(getAddFriendButton());
@@ -70,7 +63,6 @@ function stepCrossLinks(linkNumber){
             )
         })
         .then(function (button) {
-            console.log('button ', button);
             if(button) button.click();
             linkNumber = linkNumber + 1;
             return true
@@ -91,18 +83,11 @@ stepCrossLinks(0);
 
 function getAllButtons() {
     var buttons = document.getElementsByTagName('button');
-    console.log('getAllButtons ', buttons);
     return buttons
 }
 
 function getAddFriendButton() {
-    console.log('getAddFriendButtongetAddFriendButtongetAddFriendButton ',);
     let addFriendsButtons = $('.FriendRequestAdd');
-    // debugger;
-    // for (let i = 0; i < buttons.length; i++) {
-    //     console.log('hidden_elem ', !$(buttons[i]).hasClass('.hidden_elem'));
-    // }
-    console.log('buttonsbuttonsbuttons ',addFriendsButtons);
     return addFriendsButtons[addFriendsButtons.length - 1];
 }
 
@@ -120,6 +105,5 @@ function closeModal(linkNumber) {
             return closeModal();
         });
     }
-    // stepCrossLinks(linkNumber);
 }
 
