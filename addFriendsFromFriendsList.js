@@ -57,16 +57,13 @@ function alreadyAdded(links,linkNumber){
     return $(links[linkNumber]).hasClass('hidden_elem')
 }
 
-// function nextItemExist(links, linkNumber){
-//     return links[linkNumber] === undefined ? false : true;
-// }
-
 var closeButton;
 // main function that describe flow
 function stepCrossLinks(linkNumber){
     var links;
     var stepCrossLinksPromise;
 
+    // step for getting all links - links list would grow
     stepCrossLinksPromise = new Promise ((resolve, reject) =>{
         setTimeout(() => {
             links = getAllLinks();
@@ -74,7 +71,7 @@ function stepCrossLinks(linkNumber){
         }, 1000)
     });
 
-
+    // skip already added users
     stepCrossLinksPromise
         .then(() => {
             return new Promise ((resolve, reject) => {
@@ -85,12 +82,14 @@ function stepCrossLinks(linkNumber){
                 }
             })
         })
+        // show in console current user to add
         .then((linkNumber) => {
             return new Promise ((resolve, reject) => {
                 console.log('Участник', $(links[linkNumber]).attr('aria-label'));
                 resolve(linkNumber);
             })
         })
+        // click on button to add user to friends
         .then(function (linkNumber) {
             return new Promise ((resolve, reject) => {
                 setTimeout(() => {
@@ -100,14 +99,16 @@ function stepCrossLinks(linkNumber){
                 }, 4000);
             })
         })
+        // close modal that appears after sending request to user
         .then(function (result) {
             setTimeout(function () {
                 closeModal(linkNumber, closeButton);
                 stepCrossLinks(linkNumber + 1);
             }, 2000)
         })
+        // go to nest user in list if something went wrong
+        // - on any error in chain
         .catch( linkNumber => {
-            // console.log('CATCHED ',);
             stepCrossLinks(linkNumber)
         });
 }
@@ -120,7 +121,6 @@ function closeModal(linkNumber, closeButton) {
         }, 1000);
     }
 
-    // console.log("closeButton ", closeButton);
     setTimeout(function () {
         if( $('.layerCancel').length > 1 ) {
             $($('.layerCancel')[$('.layerCancel').length - 1])[0].click();
