@@ -12,7 +12,7 @@ function getAllLinks() {
 }
 
 function clickOnLink(element) {
-    console.log('click ', new Date());
+    // console.log('click ', new Date());
     element.click();
 }
 
@@ -22,7 +22,7 @@ function getAlreadyAddedButton(){
 
 
 
-function getCloseButtonForSave(){
+function getCloseButton(){
     // console.log('closeButton ', $('.layerCancel')[0]);
     return $('.layerCancel')[0];
 }
@@ -57,6 +57,10 @@ function alreadyAdded(links,linkNumber){
     return $(links[linkNumber]).hasClass('hidden_elem')
 }
 
+function revealMoreFriends(){
+        $('html, body').animate({ scrollTop: $(document).height()-$(window).height() });
+}
+
 var closeButton;
 // main function that describe flow
 function stepCrossLinks(linkNumber){
@@ -77,6 +81,9 @@ function stepCrossLinks(linkNumber){
             return new Promise ((resolve, reject) => {
                 if(alreadyAdded(links, linkNumber)){
                     reject(linkNumber + 1);
+                } else if(links[linkNumber] === undefined) {
+                    revealMoreFriends();
+                    reject(linkNumber);
                 } else {
                     resolve(linkNumber);
                 }
@@ -102,7 +109,7 @@ function stepCrossLinks(linkNumber){
         // close modal that appears after sending request to user
         .then(function (result) {
             setTimeout(function () {
-                closeModal(linkNumber, closeButton);
+                closeModal(linkNumber);
                 stepCrossLinks(linkNumber + 1);
             }, 2000)
         })
@@ -113,20 +120,18 @@ function stepCrossLinks(linkNumber){
         });
 }
 
-function closeModal(linkNumber, closeButton) {
+function closeModal(linkNumber) {
     if ($('.layerConfirm')[0]) {
         $('.layerConfirm').click();
         setTimeout(function () {
-            return closeModal(linkNumber, closeButton);
+            return closeModal(linkNumber);
         }, 1000);
-    }
-
-    setTimeout(function () {
-        if( $('.layerCancel').length > 1 ) {
+    } else {
+        setTimeout(function () {
             $($('.layerCancel')[$('.layerCancel').length - 1])[0].click();
-            return closeModal(linkNumber, closeButton);
-        }
-    }, 5000);
+            return closeModal(linkNumber);
+        }, 5000);
+    }
 }
 
 stepCrossLinks(0);

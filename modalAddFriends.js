@@ -120,7 +120,7 @@ function stepCrossLinks(linkNumber){
                     // debugger;
                     clickOnLink(links[linkNumber]);
                     resolve();
-                }, 4000);
+                }, 5000);
             })
         })
         .then(function (result) {
