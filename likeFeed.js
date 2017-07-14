@@ -123,7 +123,7 @@ function stepCrossLinks(linkNumber){
                     clickOnLink(links[linkNumber]);
                     console.log('likes ', likes +=1);
                     resolve();
-                }, 6000);
+                }, 10000);
             })
         })
         // close modal that appears after sending request to user
