@@ -41,7 +41,7 @@ function stepCrossLinks(linkNumber){
             }
             hoverOnLink(links[linkNumber]);
             resolve(linkNumber);
-        }, 4000)
+        }, 6000)
     });
 
     stepCrossLinksPromise
