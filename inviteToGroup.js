@@ -28,15 +28,19 @@
 
     function stepCrossLinks(linkNumber){
         var links = getAllLinks();
+        var stepCrossLinksPromise;
 
-        var stepCrossLinksPromise = new Promise (function (resolve, reject) {
-            if(links[linkNumber] === undefined) {
-                revealMoreButtons();
-                reject(linkNumber);
-            } else {
-                resolve(linkNumber);
-            }
-        });
+        linkNumber <= 99 ? (() => {
+            stepCrossLinksPromise = new Promise (function (resolve, reject) {
+                if(links[linkNumber] === undefined) {
+                    revealMoreButtons();
+                    reject(linkNumber);
+                } else {
+                    resolve(linkNumber);
+                }
+            })
+        })() : console.log('request quantity maximum reached ',);
+
 
         stepCrossLinksPromise
             .then(function (linkNumber) {
