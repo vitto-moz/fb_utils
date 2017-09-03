@@ -26,7 +26,6 @@ function hoverOnLink(element) {
 
 function checkIfAlreadyAdded(){
     // console.log("$('.FriendRequestOutgoing') ", $('.FriendRequestOutgoing'));
-    debugger;
     return $('.FriendRequestOutgoing').hasClass('hidden_elem');
 }
 
@@ -42,7 +41,7 @@ function stepCrossLinks(linkNumber){
             curMembProfLink = $(links[linkNumber]).attr('href');
             hoverOnLink(links[linkNumber]);
             resolve(linkNumber);
-        }, 4000)
+        }, 2000)
     });
 
     stepCrossLinksPromise
@@ -53,7 +52,7 @@ function stepCrossLinks(linkNumber){
             return new Promise( (res, rej) => {
                 setTimeout( () => {
                     res(getAddFriendButton());
-                }, 2000)
+                }, 1000)
             })
         })
         .then(function (button) {
@@ -65,18 +64,19 @@ function stepCrossLinks(linkNumber){
         })
         .then(function (button) {
             return new Promise( (res, rej) => {
-                $.get(curMembProfLink, function(data){
+                var links = $('.uiContextualLayer').find('a');
+                for (var i = 0; i < links.length; i++) {
+                    if ($(links[i]).attr('href').indexOf('111227078906045') !== -1){
 
-                    data.indexOf('111227078906045') !== -1 ? (() => {
-                        console.log('Kyiv links here ',);
                         if(button) button.click();
+                        console.log('Kyiv links here ',);
                         linkNumber = linkNumber + 1;
                         res();
-                    })() : (() => {
-                        console.log('Not from Kyiv ',);
-                        rej();
-                    })()
-                });
+                        break;
+                    }
+                }
+                console.log('Not from Kyiv ',);
+                rej();
             });
         })
         .then(function (result) {
