@@ -65,22 +65,27 @@ function stepCrossLinks(linkNumber){
         .then(function (button) {
             return new Promise( (res, rej) => {
                 var links = $('.uiContextualLayer').find('a');
+                var matchOccured = false;
                 for (var i = 0; i < links.length; i++) {
                     if (filterLinks(links[i])){
                         if(button) button.click();
                         console.log('match by word: ' + currentMatchWord);
-                        linkNumber = linkNumber + 1;
+                        matchOccured = true;
                         res();
+                        break;
                     }
                 }
-                rej();
-                console.log('out of filter',);
+                matchOccured ? null : (() => {
+                    console.log('out of filter',);
+                    rej();
+                })();
+
             });
         })
         .then(function (result) {
             setTimeout(function () {
                 closeModal(linkNumber);
-                stepCrossLinks(linkNumber + 1);
+                stepCrossLinks(linkNumber + 2);
             }, 1000)
         })
         .catch(function (error) {
@@ -122,7 +127,7 @@ function filterLinks(link){
         // $(links[i]).attr('href').indexOf('111227078906045') !== -1
         if ($(link).html().indexOf(wordsForFilter[i]) !== -1 ) {
             currentMatchWord = wordsForFilter[i];
-            return true
+            return true;
         }
     }
 }
@@ -133,6 +138,10 @@ var wordsForFilter = [
     'Киев',
     'Харьков',
     'Серебро',
+    'Луган',
+    'Мейкап',
+    'Василина',
+    'Новгород',
 ];
 
 stepCrossLinks(0);
