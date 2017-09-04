@@ -66,17 +66,15 @@ function stepCrossLinks(linkNumber){
             return new Promise( (res, rej) => {
                 var links = $('.uiContextualLayer').find('a');
                 for (var i = 0; i < links.length; i++) {
-                    if ($(links[i]).attr('href').indexOf('111227078906045') !== -1){
-
+                    if (filterLinks(links[i])){
                         if(button) button.click();
-                        console.log('Kyiv links here ',);
+                        console.log('match by word: ' + currentMatchWord);
                         linkNumber = linkNumber + 1;
                         res();
-                        break;
                     }
                 }
-                console.log('Not from Kyiv ',);
                 rej();
+                console.log('out of filter',);
             });
         })
         .then(function (result) {
@@ -118,6 +116,24 @@ function closeModal(linkNumber) {
         });
     }
 }
+
+function filterLinks(link){
+    for (var i = 0; i < wordsForFilter.length; i++) {
+        // $(links[i]).attr('href').indexOf('111227078906045') !== -1
+        if ($(link).html().indexOf(wordsForFilter[i]) !== -1 ) {
+            currentMatchWord = wordsForFilter[i];
+            return true
+        }
+    }
+}
+
+var currentMatchWord = '';
+
+var wordsForFilter = [
+    'Киев',
+    'Харьков',
+    'Серебро',
+];
 
 stepCrossLinks(0);
 
