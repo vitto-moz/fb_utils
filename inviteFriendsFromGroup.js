@@ -41,7 +41,7 @@ function stepCrossLinks(linkNumber){
             curMembProfLink = $(links[linkNumber]).attr('href');
             hoverOnLink(links[linkNumber]);
             resolve(linkNumber);
-        }, 2000)
+        }, 4000)
     });
 
     stepCrossLinksPromise
@@ -52,7 +52,7 @@ function stepCrossLinks(linkNumber){
             return new Promise( (res, rej) => {
                 setTimeout( () => {
                     res(getAddFriendButton());
-                }, 1000)
+                }, 2000)
             })
         })
         .then(function (button) {
