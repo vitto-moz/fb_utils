@@ -8,10 +8,11 @@ var curMembProfLink = '';
 function getAllLinks() {
     var matchingElements = [];
     var membersPanel = $('#pagelet_group_members');
-    allElements = $(membersPanel).find('[data-hovercard]');
+    allElements = $(membersPanel).find('[data-hovercard]._8o._8r.lfloat._ohe');
     for (var i = 0, n = allElements.length; i < n; i++) {
         matchingElements.push(allElements[i]);
     }
+    // debugger;
     return matchingElements
 };
 
@@ -85,11 +86,11 @@ function stepCrossLinks(linkNumber){
         .then(function (result) {
             setTimeout(function () {
                 closeModal(linkNumber);
-                stepCrossLinks(linkNumber + 2);
+                stepCrossLinks(linkNumber + 1);
             }, 1000)
         })
         .catch(function (error) {
-            linkNumber = linkNumber + 2;
+            linkNumber = linkNumber + 1;
             stepCrossLinks(linkNumber);
         });
 }
@@ -136,12 +137,7 @@ var currentMatchWord = '';
 
 var wordsForFilter = [
     'Киев',
-    'Харьков',
-    'Серебро',
-    'Луган',
-    'Мейкап',
-    'Василина',
-    'Новгород',
+    'Kyiv',
 ];
 
 stepCrossLinks(0);
